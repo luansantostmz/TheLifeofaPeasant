@@ -3,13 +3,15 @@ using UnityEngine;
 public class NPC : MonoBehaviour
 {
 	public GameObject seed; // Referência ao objeto semente a ser plantado
-	public float moveSpeed = 3f; // Velocidade de movimento do NPC
-	public float plantingDistance = 2f; // Distância entre o NPC e o objeto "Solo" durante o plantio
+	public GameObject soilPrefab; // Prefab do terreno
+	public float plantDistance = 2f; // Distância mínima para plantar
+	public float plantTime = 2f; // Tempo necessário para plantar (em segundos)
 
 	private enum NPCState
 	{
 		Idle,
-		Planting
+		Planting,
+		Harvesting
 	}
 
 	private NPCState currentState = NPCState.Idle;
@@ -24,39 +26,34 @@ public class NPC : MonoBehaviour
 
 	private void Update()
 	{
-		if (currentState == NPCState.Planting)
+		switch (currentState)
 		{
-			// Verifica se há solo selecionado
-			if (currentSoil != null)
-			{
-				// Calcula a direção e a distância para o solo
-				Vector3 directionToSoil = currentSoil.transform.position - transform.position;
-				directionToSoil.y = 0f; // Garante que o NPC fique na mesma altura do solo
-				float distanceToSoil = directionToSoil.magnitude;
+			case NPCState.Planting:
+				if (currentSoil != null)
+				{
+					Vector3 directionToSoil = currentSoil.transform.position - transform.position;
+					float distanceToSoil = directionToSoil.magnitude;
 
-				// Se o NPC estiver longe demais, move-se em direção ao solo
-				if (distanceToSoil > plantingDistance)
-				{
-					transform.position += directionToSoil.normalized * moveSpeed * Time.deltaTime;
-				}
-				else
-				{
-					// Caso contrário, ele está perto o suficiente para plantar
-					// Aguarda por 2 segundos antes de plantar
-					plantTimer += Time.deltaTime;
-					if (plantTimer >= 2f)
+					if (distanceToSoil <= plantDistance)
 					{
-						Plant(seed, currentSoil); // Planta a semente
-						Destroy(currentSoil); // Destrói o solo
-						currentState = NPCState.Idle; // Retorna ao estado de repouso
+						plantTimer += Time.deltaTime;
+						if (plantTimer >= plantTime)
+						{
+							Plant(seed, currentSoil);
+							currentState = NPCState.Idle;
+						}
+					}
+					else
+					{
+						transform.position += directionToSoil.normalized * Time.deltaTime;
 					}
 				}
-			}
-			else
-			{
-				// Se o solo não estiver mais disponível, volta ao estado ocioso
-				currentState = NPCState.Idle;
-			}
+				break;
+			case NPCState.Harvesting:
+				// Implemente a lógica de colheita aqui
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -64,21 +61,26 @@ public class NPC : MonoBehaviour
 	{
 		if (currentState == NPCState.Idle)
 		{
-			// Verifica se há solo disponível para plantar
 			soilObjects = GameObject.FindGameObjectsWithTag("Soil");
 
 			if (soilObjects.Length > 0)
 			{
-				// Seleciona um solo aleatório para plantar
 				currentSoil = soilObjects[Random.Range(0, soilObjects.Length)];
-				currentState = NPCState.Planting; // NPC entra no estado de plantio
+				currentState = NPCState.Planting;
 			}
 		}
 	}
 
 	private void Plant(GameObject seed, GameObject soil)
 	{
-		// Lógica para plantar a semente no solo
-		Instantiate(seed, soil.transform.position, Quaternion.identity); // Instancia a semente
+		Instantiate(seed, soil.transform.position, Quaternion.identity);
+		Destroy(soil);
+	}
+
+	// Método para desenhar um Gizmo para visualizar a distância de plantio
+	private void OnDrawGizmosSelected()
+	{
+		Gizmos.color = Color.green;
+		Gizmos.DrawWireSphere(transform.position, plantDistance);
 	}
 }
