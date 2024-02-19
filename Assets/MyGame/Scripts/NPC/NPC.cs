@@ -15,8 +15,7 @@ public class NPC : MonoBehaviour
 	}
 
 	private NPCState currentState = NPCState.Idle;
-	private GameObject[] soilObjects; // Lista de objetos com a tag "Soil"
-	private GameObject currentSoil; // Solo atualmente selecionado para plantar
+	private GameObject currentSoil; // Solo atualmente selecionado para plantar ou colher
 	private float plantTimer = 0f; // Temporizador para controlar o plantio
 
 	private void Start()
@@ -61,14 +60,32 @@ public class NPC : MonoBehaviour
 	{
 		if (currentState == NPCState.Idle)
 		{
-			soilObjects = GameObject.FindGameObjectsWithTag("Soil");
+			GameObject[] soilObjects = GameObject.FindGameObjectsWithTag("Soil");
+			currentSoil = FindNearestSoil(soilObjects);
 
-			if (soilObjects.Length > 0)
+			if (currentSoil != null)
 			{
-				currentSoil = soilObjects[Random.Range(0, soilObjects.Length)];
 				currentState = NPCState.Planting;
 			}
 		}
+	}
+
+	private GameObject FindNearestSoil(GameObject[] soilObjects)
+	{
+		GameObject nearestSoil = null;
+		float shortestDistance = Mathf.Infinity;
+
+		foreach (GameObject soil in soilObjects)
+		{
+			float distance = Vector3.Distance(transform.position, soil.transform.position);
+			if (distance < shortestDistance)
+			{
+				shortestDistance = distance;
+				nearestSoil = soil;
+			}
+		}
+
+		return nearestSoil;
 	}
 
 	private void Plant(GameObject seed, GameObject soil)
