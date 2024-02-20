@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6943559169050001376}
   - component: {fileID: 6938720389435822876}
+  - component: {fileID: -6167371575937652443}
   m_Layer: 0
   m_Name: Seed
   m_TagString: Seed
@@ -73,8 +74,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0, b: 0.9479666, a: 1}
+  m_Sprite: {fileID: 694280572, guid: 25ecbc41827bcfc4886561ed154f78b3, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -84,3 +85,29 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-6167371575937652443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967503973968894075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ba6d2785b672104e8684ca354cd5ac9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  plantName: Potato
+  growthStages:
+  - sprite: {fileID: 694280572, guid: 25ecbc41827bcfc4886561ed154f78b3, type: 3}
+    growthTime: 1
+  - sprite: {fileID: -376529808, guid: 25ecbc41827bcfc4886561ed154f78b3, type: 3}
+    growthTime: 1
+  - sprite: {fileID: -1433650252, guid: 25ecbc41827bcfc4886561ed154f78b3, type: 3}
+    growthTime: 1
+  - sprite: {fileID: 1777958160, guid: 25ecbc41827bcfc4886561ed154f78b3, type: 3}
+    growthTime: 1
+  - sprite: {fileID: 1175326521, guid: 25ecbc41827bcfc4886561ed154f78b3, type: 3}
+    growthTime: 1
+  - sprite: {fileID: 540642695, guid: 25ecbc41827bcfc4886561ed154f78b3, type: 3}
+    growthTime: 1
