@@ -2,10 +2,15 @@ using UnityEngine;
 
 public class NPC : MonoBehaviour
 {
+
+	[SerializeField] private float plantDistance = 2f; // Distância mínima para plantar
+	[SerializeField] private float plantTime = 2f; // Tempo necessário para plantar (em segundos)
+	[SerializeField] private float speedNpc;
+
 	public GameObject seed; // Referência ao objeto semente a ser plantado
 	public GameObject soilPrefab; // Prefab do terreno
-	public float plantDistance = 2f; // Distância mínima para plantar
-	public float plantTime = 2f; // Tempo necessário para plantar (em segundos)
+
+	
 
 	private enum NPCState
 	{
@@ -16,6 +21,7 @@ public class NPC : MonoBehaviour
 
 	private NPCState currentState = NPCState.Idle;
 	private GameObject currentSoil; // Solo atualmente selecionado para plantar ou colher
+	private GameObject currentDrop;
 	private float plantTimer = 0f; // Temporizador para controlar o plantio
 
 	private void Start()
@@ -44,12 +50,30 @@ public class NPC : MonoBehaviour
 					}
 					else
 					{
-						transform.position += directionToSoil.normalized * Time.deltaTime;
+						transform.position += directionToSoil.normalized * Time.deltaTime * speedNpc;
 					}
 				}
 				break;
 			case NPCState.Harvesting:
-				// Implemente a lógica de colheita aqui
+				if (currentDrop != null)
+				{
+					Vector3 directionToDrop = currentDrop.transform.position - transform.position;
+					float distanceToDrop = directionToDrop.magnitude;
+
+					if (distanceToDrop <= plantDistance)
+					{
+						plantTimer += Time.deltaTime;
+						if (plantTimer >= plantTime)
+						{
+							Plant(seed, currentSoil);
+							currentState = NPCState.Idle;
+						}
+					}
+					else
+					{
+						transform.position += directionToDrop.normalized * Time.deltaTime * speedNpc;
+					}
+				}
 				break;
 			default:
 				break;
@@ -60,13 +84,23 @@ public class NPC : MonoBehaviour
 	{
 		if (currentState == NPCState.Idle)
 		{
-			GameObject[] soilObjects = GameObject.FindGameObjectsWithTag("Soil");
-			currentSoil = FindNearestSoil(soilObjects);
+			//Soil
+			GameObject[] soilObjects = GameObject.FindGameObjectsWithTag("Soil");			
+			currentSoil = FindNearestSoil(soilObjects);			
 
 			if (currentSoil != null)
 			{
 				currentState = NPCState.Planting;
 			}
+
+			//DROP
+			/*GameObject[] dropObjects = GameObject.FindGameObjectsWithTag("Drop");
+			currentSoil = FindNearestSoil(dropObjects);
+
+			if (currentDrop != null)
+			{
+				currentState = NPCState.Harvesting;
+			}*/
 		}
 	}
 
@@ -86,6 +120,23 @@ public class NPC : MonoBehaviour
 		}
 
 		return nearestSoil;
+	}
+	private GameObject FindNearestDrop(GameObject[] dropObjects)
+	{
+		GameObject nearestDrop = null;
+		float shortestDistance = Mathf.Infinity;
+
+		foreach (GameObject drop in dropObjects)
+		{
+			float distance = Vector3.Distance(transform.position, drop.transform.position);
+			if (distance < shortestDistance)
+			{
+				shortestDistance = distance;
+				nearestDrop = drop;
+			}
+		}
+
+		return nearestDrop;
 	}
 
 	private void Plant(GameObject seed, GameObject soil)

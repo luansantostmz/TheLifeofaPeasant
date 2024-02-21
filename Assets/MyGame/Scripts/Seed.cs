@@ -1,8 +1,10 @@
 using UnityEngine;
 using System;
 
-public class Plant : MonoBehaviour
+public class Seed : MonoBehaviour
 {
+	[SerializeField] private GameObject drop;
+
 	[Serializable]
 	public class GrowthStage
 	{
@@ -12,7 +14,7 @@ public class Plant : MonoBehaviour
 
 	public string plantName = "Planta";
 	public GrowthStage[] growthStages;
-	public Action<Plant> onReadyToHarvest;
+	public Action<Seed> onReadyToHarvest;
 
 	private int currentStageIndex = 0;
 	private float growTimer = 0f;
@@ -46,23 +48,11 @@ public class Plant : MonoBehaviour
 		{
 			spriteRenderer.sprite = growthStages[currentStageIndex].sprite;
 		}
-		else
+		if(currentStageIndex>= growthStages.Length) 
 		{
-			// A planta está pronta para colher
-			if (onReadyToHarvest != null)
-			{
-				onReadyToHarvest(this);
-			}
+			Instantiate(drop, transform.position, Quaternion.identity);
+			Destroy(gameObject);
 		}
-	}
-
-	public void Harvest()
-	{
-		// Lógica para colher a planta
-		Debug.Log("Colhendo a planta " + plantName);
-		// Reiniciar a planta para outro ciclo de crescimento, se necessário
-		currentStageIndex = 0;
-		growTimer = 0f;
-		spriteRenderer.sprite = growthStages[currentStageIndex].sprite;
+	
 	}
 }
