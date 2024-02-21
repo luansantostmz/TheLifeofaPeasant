@@ -97,8 +97,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5c53fa8578285a459415f4e84d647f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  plantDistance: 0.25
-  plantTime: 1
+  actionDistance: 0.2
+  actionTime: 2
   speedNpc: 5
   seed: {fileID: 1967503973968894075, guid: 41d4b553fc3c7da4fae8f4e2cda7e26c, type: 3}
   soilPrefab: {fileID: 5216735389597361873, guid: f3e0eba5f8bf4824093c0342809619e3, type: 3}
+  currentState: 0

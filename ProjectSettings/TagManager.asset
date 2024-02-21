@@ -8,6 +8,7 @@ TagManager:
   - Farmer
   - Soil
   - Seed
+  - Drop
   layers:
   - Default
   - TransparentFX
