@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.AI;
 public class NPC : MonoBehaviour
 {
 	[SerializeField] private float actionDistance = 2f; // Distância mínima para ação
@@ -8,6 +8,9 @@ public class NPC : MonoBehaviour
 
 	public GameObject seed; // Referência ao objeto semente a ser plantado
 	public GameObject soilPrefab; // Prefab do terreno
+
+
+	NavMeshAgent agent;
 
 	public enum NPCState
 	{
@@ -23,6 +26,12 @@ public class NPC : MonoBehaviour
 	private void Start()
 	{
 		InvokeRepeating("CheckTasks", 0f, 1f); // Verifica as tarefas a cada segundo
+
+		agent = GetComponent<NavMeshAgent>();
+		agent.updateRotation = false;
+		agent.updateUpAxis = false;
+
+		agent.speed = speedNpc;
 	}
 
 	private void Update()
@@ -51,7 +60,8 @@ public class NPC : MonoBehaviour
 					}
 					else
 					{
-						transform.position += directionToTarget.normalized * Time.deltaTime * speedNpc;
+						GoToTarget(directionToTarget);
+						//transform.position += directionToTarget.normalized * Time.deltaTime * speedNpc;
 					}
 				}
 				break;
@@ -124,5 +134,10 @@ public class NPC : MonoBehaviour
 	{
 		Gizmos.color = Color.green;
 		Gizmos.DrawWireSphere(transform.position, actionDistance);
+	}
+
+	public void GoToTarget(Vector2 target) 
+	{
+		agent.SetDestination(target);
 	}
 }
